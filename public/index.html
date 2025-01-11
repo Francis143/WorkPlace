@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #c5cfc364;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #e37b7b;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #dd6c10;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #dd1add;
+            color: white;
+        }
+
+        .employee-list {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Employee Registration</h1>
+        <form id="employeeForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required><br>
+
+            <label for="id">ID:</label>
+            <input type="number" id="id" required><br>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" required><br>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select><br>
+
+            <input type="submit" value="Submit">
+        </form>
+
+        <div class="employee-list">
+            <h2>Employee List</h2>
+            <table id="employeeTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>ID</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Employees will be dynamically populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Fetch existing employees and display them
+        function fetchEmployees() {
+            fetch('http://localhost:3000/api/employees')
+                .then(response => response.json())
+                .then(data => {
+                    const employeeTable = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+                    employeeTable.innerHTML = ''; // Clear the table before adding new rows
+
+                    data.forEach(employee => {
+                        const row = employeeTable.insertRow();
+                        row.innerHTML = `
+              <td>${employee.name}</td>
+              <td>${employee.id}</td>
+              <td>${employee.age}</td>
+              <td>${employee.gender}</td>
+            `;
+                    });
+                })
+                .catch(error => console.error('Error fetching employees:', error));
+        }
+
+        document.getElementById('employeeForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const employeeData = {
+                name: document.getElementById('name').value,
+                id: document.getElementById('id').value,
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value
+            };
+
+            fetch('http://localhost:3000/api/employees', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            })
+                .then(response => response.json())
+                .then(() => {
+                    alert('Employee added successfully');
+                    document.getElementById('employeeForm').reset();
+                    fetchEmployees(); // Refresh the employee list
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error adding employee');
+                });
+        });
+
+        // Fetch and display employees when the page loads
+        window.onload = fetchEmployees;
+    </script>
+</body>
+
+</html>
