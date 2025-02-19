@@ -8,4 +8,18 @@ describe("Handling alerts", () => {
     });
     cy.get("#alertBtn").click();
   });
+  it("Confirm Alert ", () => {
+    cy.on("window:confirm", (message) => {
+      expect(message).to.equal("Press a button!");
+      return true;
+    });
+    cy.get("#confirmBtn").click();
+  });
+  it("Confirm Alert ", () => {
+    cy.on("window:confirm", (message) => {
+      expect(message).to.equal("Press a button!");
+      return false;
+    });
+    cy.get("#confirmBtn").click();
+  });
 });
