@@ -1,3 +1,4 @@
+///<reference types="Cypress"/>
 describe("Handling alerts", () => {
   beforeEach("", () => {
     cy.visit("https://testautomationpractice.blogspot.com/");
@@ -22,4 +23,13 @@ describe("Handling alerts", () => {
     });
     cy.get("#confirmBtn").click();
   });
+  it.only("Prompt Alert ", () => {
+    cy.window().then((win) => {
+      cy.stub(win,'prompt').returns("Francis")
+    })
+    cy.get('#promptBtn').click()
+  });
+
+
+
 });
